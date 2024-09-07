@@ -1,0 +1,64 @@
+name: CI/CD Pipeline
+
+# Trigger this workflow on push events to the main branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Set up the appropriate language environment (Node.js, Python, etc.)
+      # Example for Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Run build command
+      - name: Build project
+        run: npm run build
+
+test:
+    runs-on: ubuntu-latest
+    needs: build  # This makes the test job depend on the build job
+
+    steps:
+      # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Set up Node.js environment again
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Run tests
+      - name: Run tests
+        run: npm test
+
+ deploy:
+    runs-on: ubuntu-latest
+    needs: test  # This makes the deploy job depend on the test job
+
+    steps:
+      - name: Deploy to environment
+        run: |
+          # Add deployment script here, e.g., deploy to AWS, DigitalOcean, etc.
+          echo "Deploying to environment..."
